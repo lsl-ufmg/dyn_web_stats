@@ -1,4 +1,4 @@
 [submodule "extras/warc"]
 	path = extras/warc
-	url = git@github.com:michelboaventura/warc.git
-	branch = ycp_parsing
+	url = git@github.com:lsl-ufmg/warc.git
+	branch = master
