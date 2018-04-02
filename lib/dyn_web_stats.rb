@@ -3,6 +3,8 @@ require 'heritrix'
 require 'warc'
 require 'fifo'
 require 'sift4'
+require 'bootstrap'
+require 'regression'
 
 # escalonador
 # 1. instanciar variáveis iniciais (qual o T, qual a capacidade C, etc)
@@ -119,6 +121,10 @@ class DynWebStats
       end
 
       page.update_attribute(:next_collection_t, new_instant)
+
+      x = page.crawls.map(&:collection_t)
+      page.update_attribute(:regression, Regression.regression(x, page.size))
+      page.update_attribute(:bootstrap, Bootstrap.bootstrap(page.size))
     end
   end
 
