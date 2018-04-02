@@ -1,4 +1,6 @@
 heritrix.pid
 heritrix_out.log
-heritrix/jobs/mapaweb
+heritrix
+!heritrix/jobs
+!heritrix/jobs/mapaweb
 !heritrix/jobs/mapaweb/crawler-beans.cxml
