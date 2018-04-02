@@ -24,6 +24,7 @@ class Page
   field :next_collection_t,     type: Integer
   field :regression,            type: Hash, default: { b0: 0.0, b1: 0.0, d: 0.0, r2: 0.0 }
   field :bootstrap,             type: Hash, default: { mean: 0.0, lbound: 0.0, ubound: 0.0 }
+  field :sched_val,             type: Float, default: 0.0
 end
 
 class Config

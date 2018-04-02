@@ -2,6 +2,7 @@ require 'models'
 require 'heritrix'
 require 'warc'
 require 'fifo'
+require 'dyn'
 require 'sift4'
 require 'bootstrap'
 require 'regression'
@@ -63,6 +64,8 @@ class DynWebStats
       @scheduler = Fifo
     when :lifo
       @scheduler = Lifo
+    when :dyn
+      @scheduler = Dyn
     else
       raise "Invalid scheduler"
     end
@@ -125,6 +128,15 @@ class DynWebStats
       x = page.crawls.map(&:collection_t)
       page.update_attribute(:regression, Regression.regression(x, page.size))
       page.update_attribute(:bootstrap, Bootstrap.bootstrap(page.size))
+
+      if @scheduler == Dyn
+        u = page.regression[:b1] * @config.instant + page.regression[:b0]
+
+        outdatecost = (u - page.bootstrap[:mean]).abs / page.bootstrap[:mean]
+        variancecost = (page.bootrap[:ubound] - page.bootstrap[:mean]).abs / page.bootstrap[:mean]
+
+        page.update_attribute(:sched_val, 2 * outdatecost * variancecost / (outdatecost + variancecost))
+      end
     end
   end
 
@@ -134,7 +146,7 @@ class DynWebStats
     #db.paginas.createIndex({"url": 1}, { unique: true})
     File.read("#{@warc_path}/0/metadata").each_line do |line|
       next if ignore_pages line
-      lista << { url: line.chomp, previous_collection_t: @scheduler.priority, next_collection_t: @config.instant + 1, config_id: @config.id }
+      lista << { url: line.chomp, previous_collection_t: @scheduler.priority, sched_val: @scheduler.priority, next_collection_t: @config.instant + 1, config_id: @config.id }
     end
 
     begin
