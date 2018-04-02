@@ -1,6 +1,5 @@
 class Regression
-
-  def self.linearreg(xvec, yvec)
+  def self.regression(xvec, yvec)
     out = { b0: 0.0, b1: 0.0, r2: 1.0, d: 0.0 }
 
     sumxi = sumyi = sumxiyi = sumxi2 = sumyi2 = 0.0
