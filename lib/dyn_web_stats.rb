@@ -66,10 +66,10 @@ class DynWebStats
     parse_warcs
     process_new_pages
     process_pages
-    update_crawl
+    update_config
   end
 
-  def update_crawl
+  def update_config
     @config.update_attribute(:instant, @config.instant + 1)
   end
 
@@ -82,12 +82,7 @@ class DynWebStats
 
       next if ignore_pages url
 
-      page = Page.where(url: url).last
-
-      if page.nil?
-        puts "Página '#{url}' não existe no banco!"
-        next
-      end
+      page = Page.where(url: url).last || Page.create(url: url, config: @config, crawl: @crawl)
 
       last_size = page.size.last.to_i
       page.size << size
