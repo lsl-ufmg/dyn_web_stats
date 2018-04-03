@@ -10,6 +10,6 @@ class Sift4
 
     delta = content1[start1..end1].bytes - content2[start2..end2].bytes
 
-    delta / content1[start1..end1].size.to_f
+    delta.size / content1[start1..end1].size.to_f
   end
 end
