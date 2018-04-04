@@ -79,13 +79,20 @@ class DynWebStats
       content = json["content"]
       url     = json["WARC-Target-URI"]
       size    = json["Content-Length"].to_i
+      code    = json["code"]
 
       next if ignore_pages url
 
-      page = Page.where(url: url).last || Page.create(url: url, config: @config, crawl: @crawl)
+      page = Page.where(url: url).last
+      if !page
+        page = Page.create(url: url, config: @config)
+        PagesCrawl.create(crawl: @crawl, page: page, collection_t: @config.instant)
+      end
 
       last_size = page.size.last.to_i
       page.size << size
+
+      page.code << code
 
       min, max = [size, last_size].minmax
 
@@ -107,7 +114,7 @@ class DynWebStats
 
       page.next_collection_t = new_instant
 
-      x = page.crawls.map(&:collection_t)
+      x = page.pages_crawl.map(&:collection_t)
       page.regression = Regression.regression(x, page.size)
       page.bootstrap = Bootstrap.bootstrap(page.size)
 
@@ -157,7 +164,7 @@ class DynWebStats
   end
 
   def create_crawl
-    @crawl = Crawl.create!(collection_t: @config.instant, config: @config)
+    @crawl = Crawl.create!(config: @config)
   end
 
   # gera estrutura interna de coleta a partir do db
@@ -174,13 +181,16 @@ class DynWebStats
     if @remainer.any?
       @remainer.update_all(postpone: true)
     else
-      postponed = @crawl.pages.where(postpone: true)
+      postponed = @config.pages.where(postpone: true)
       @postponed_list, _ = @scheduler.sched(postponed, capacity - @crawl_list.size)
     end
 
-    #TODO otimizar
-    @pages = @crawl_list.to_a + @postponed_list.to_a
-    @crawl.pages = @pages
+    page_ids = @crawl_list.pluck(:id) + @postponed_list&.pluck(:id).to_a
+
+    lista = page_ids.map { |page_id| { collection_t: @config.instant, page_id: page_id, crawl_id: @crawl.id } }
+    PagesCrawl.collection.insert_many(lista, { ordered: false })
+
+    @pages = Page.in(id: page_ids)
   end
 
   def self.load_mongoid_config config

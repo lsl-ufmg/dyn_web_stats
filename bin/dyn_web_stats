@@ -63,12 +63,12 @@ new_config_cmd = Cri::Command.define do
   required :n, :name, 'config name'
   flag     :h, :help, 'show help'
   optional :m, :mongoid, 'mongoid config file', default: 'config/mongoid.yml'
-  optional :s, :seeds, 'initial seeds (separated with comma)'
+  optional :s, :seeds, 'initial seed file (one seed per line)'
 
   run do |opts, _, cmd|
     capacity = opts[:capacity].to_i
     name = opts[:name]
-    seeds = opts[:seeds].to_s.split(',')
+    seeds = File.read(opts[:seeds].to_s).split("\n")
     mongoid = opts[:mongoid]
 
     if !(capacity && name && seeds)

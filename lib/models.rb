@@ -1,24 +1,32 @@
 require 'mongoid'
 
+class PagesCrawl
+  include Mongoid::Document
+
+  belongs_to :crawl
+  belongs_to :page
+
+  field :collection_t, type: Integer
+end
+
 class Crawl
   include Mongoid::Document
 
   belongs_to :config
-  has_and_belongs_to_many :pages
-
-  field :collection_t, type: Integer
+  has_many :pages_crawl
 end
 
 class Page
   include Mongoid::Document
 
-  has_and_belongs_to_many :crawls
+  has_many :pages_crawl
   belongs_to :config
 
   field :url,                   type: String
   field :content,               type: String
   field :distance,              type: Float,   default: nil
   field :size,                  type: Array,   default: []
+  field :code,                  type: Array,   default: []
   field :crawl_status,          type: Integer, default: 0
   field :previous_collection_t, type: Integer
   field :next_collection_t,     type: Integer
