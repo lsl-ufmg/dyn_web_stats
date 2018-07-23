@@ -3,7 +3,7 @@ require 'logger'
 
 class Heritrix
   URL = "https://localhost:8443/engine/job/"
-  MAX_TRIES = 20
+  MAX_TRIES = 50
   WAIT_SEC = 5
 
   def initialize path, job_name, auth: "admin:admin", bind: "0.0.0.0"
@@ -56,7 +56,7 @@ class Heritrix
   end
 
   def teardown_job
-    run_and_wait_action("teardown", "Job is Unbuilt")
+    run_and_wait_action("teardown", "Job is Unbuilt", exit_on_timeout: false)
   end
 
   def start_job
@@ -71,6 +71,7 @@ class Heritrix
       @logger.info(
         "Job #{@job_name} running: #{status[:downloaded]}/#{status[:total]} (#{status[:prop]}%)"
       )
+      break if status[:prop] >= 90.00
       sleep WAIT_SEC
     end
 
@@ -105,7 +106,7 @@ class Heritrix
     !msg || (msg && out[msg] != nil)
   end
 
-  def run_and_wait_action(action, msg)
+  def run_and_wait_action(action, msg, exit_on_timeout: true)
     tries = 0
 
     while !run_action(action, msg: msg)
@@ -115,7 +116,8 @@ class Heritrix
 
       if tries == MAX_TRIES
         @logger.error("Could not execute '#{action}' on '#{@job_name}'. MAX_TRIES (#{MAX_TRIES}) reached.");
-        exit
+        exit if exit_on_timeout
+        return
       end
 
       sleep WAIT_SEC

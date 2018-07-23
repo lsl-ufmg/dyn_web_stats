@@ -85,8 +85,12 @@ class DynWebStats
 
       page = Page.where(url: url).last
       if !page
-        page = Page.create(url: url, config: @config)
-        PagesCrawl.create(crawl: @crawl, page: page, collection_t: @config.instant)
+        begin
+          page = Page.create(url: url, config: @config)
+          PagesCrawl.create(crawl: @crawl, page: page, collection_t: @config.instant)
+        rescue
+          next
+        end
       end
 
       last_size = page.size.last.to_i
@@ -178,7 +182,7 @@ class DynWebStats
 
     @crawl_list, @remainer = @scheduler.sched(@pages, capacity)
 
-    if @remainer.any?
+    if @remainer.count != 0
       @remainer.update_all(postpone: true)
     else
       postponed = @config.pages.where(postpone: true)

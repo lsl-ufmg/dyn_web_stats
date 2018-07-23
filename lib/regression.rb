@@ -12,6 +12,12 @@ class Regression
       return out
     end
 
+    if xvec.size > yvec.size
+      (xvec.size - yvec.size).times { yvec << yvec.last.to_i }
+    elsif yvec.size > xvec.size
+      (yvec.size - xvec.size).times { xvec << xvec.last.to_i }
+    end
+
     xvec.zip(yvec).each do |xi, yi|
       sumxi   += xi
       sumyi   += yi

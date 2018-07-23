@@ -272,13 +272,13 @@ http://nic.br
  <bean id="fetchHttp" class="org.archive.modules.fetcher.FetchHTTP">
    <!-- <property name="useHTTP11" value="false" /> -->
    <!-- <property name="maxLengthBytes" value="0" /> -->
-   <property name="timeoutSeconds" value="1200" />
+   <property name="timeoutSeconds" value="5" />
    <!-- <property name="maxFetchKBSec" value="0" /> -->
    <!-- <property name="defaultEncoding" value="ISO-8859-1" /> -->
    <!-- <property name="shouldFetchBodyRule">
         <bean class="org.archive.modules.deciderules.AcceptDecideRule"/>
        </property> -->
-  <property name="soTimeoutMs" value="20000" />
+  <property name="soTimeoutMs" value="5000" />
   <!-- <property name="sendIfModifiedSince" value="true" /> -->
   <!-- <property name="sendIfNoneMatch" value="true" /> -->
   <!-- <property name="sendConnectionClose" value="true" /> -->
@@ -441,8 +441,8 @@ http://nic.br
      <bean class="org.archive.crawler.frontier.precedence.BaseQueuePrecedencePolicy" />
    </property>
    <property name="snoozeLongMs" value="300000" />
-   <property name="retryDelaySeconds" value="5" />
-   <property name="maxRetries" value="5" />
+   <property name="retryDelaySeconds" value="1" />
+   <property name="maxRetries" value="2" />
    <property name="recoveryLogEnabled" value="true" />
    <property name="maxOutlinks" value="6000" />
    <property name="extractIndependently" value="false" />
@@ -505,10 +505,10 @@ http://nic.br
 <bean id='veryPolite' class='org.archive.spring.Sheet'>
   <property name='map'>
     <map>
-      <entry key='disposition.delayFactor' value='2'/>
+      <entry key='disposition.delayFactor' value='1'/>
       <entry key='disposition.minDelayMs' value='500'/>
-      <entry key='disposition.maxDelayMs' value='1000'/>
-      <entry key='disposition.respectCrawlDelayUpToSeconds' value='10'/>
+      <entry key='disposition.maxDelayMs' value='500'/>
+      <entry key='disposition.respectCrawlDelayUpToSeconds' value='1'/>
     </map>
   </property>
 </bean>
@@ -534,22 +534,18 @@ http://nic.br
    New associations may also be added mid-crawl using the scripting facility.
   -->
 
-<!--
 <bean class='org.archive.crawler.spring.SurtPrefixesSheetAssociation'>
  <property name='surtPrefixes'>
   <list>
-   <value>http://(org,example,</value>
-   <value>http://(com,example,www,)/</value>
+   <value>*</value>
   </list>
  </property>
  <property name='targetSheetNames'>
   <list>
    <value>veryPolite</value>
-   <value>smallBudget</value>
   </list>
  </property>
 </bean>
--->
 
  <!--
    OPTIONAL BUT RECOMMENDED BEANS
