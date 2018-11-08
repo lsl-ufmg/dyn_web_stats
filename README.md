@@ -6,8 +6,9 @@ O DynWebStats é um arcabouço para coleta dinâmica de conjuntos de páginas na
 
 ## Arquitetura
 
-O diagrama a seguir mostra o funcionamento básico do DynWebStats:
+O diagrama conceitual a seguir mostra o funcionamento básico do DynWebStats:
 
+![alt text](docs/arquitetura.svg)
 
 
 ## Descrição estrutural
