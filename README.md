@@ -1,5 +1,15 @@
 # DynWebStats
 
+## Introdução
+
+O DynWebStats é um arcabouço para coleta dinâmica de conjuntos de páginas na WEB. Através de estratégias de escalonamento, o arcabouço consegue racionalizar recursos e manter um retrato atualizado do conjunto de páginas que está sendo analisado.
+
+## Arquitetura
+
+O diagrama a seguir mostra o funcionamento básico do DynWebStats:
+
+
+
 ## Descrição estrutural
 
 Os seguintes arquivos são utilizados no sistema:
